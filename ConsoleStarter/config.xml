@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Root>
+  <Page Name="default">
+    <Message>
+      <![CDATA[default state
+tag1 - go to state 1
+tag2 - go to state 2
+tag3 - go to state 3]]>
+    </Message>
+    <Tag TagName="tag1" PageName="state1" />
+    <Tag TagName="tag2" PageName="state2" />
+    <Tag TagName="tag3" PageName="state3" />
+  </Page>
+  <Page Name="state1">
+    <Message>
+    <![CDATA[first state
+def - go to default state
+tag2 - go to state 2
+tag3 - go to state 3]]>
+    </Message>
+    <Tag TagName="tag2" PageName="state2" />
+    <Tag TagName="tag3" PageName="state3" />
+    <Tag TagName="def" PageName="default" />
+  </Page>
+  <Page Name="state2">
+    <Message>
+      <![CDATA[second state
+def - go to default state
+tag1 - go to state 1
+tag3 - go to state 3]]>
+    </Message>
+    <Tag TagName="tag1" PageName="state1" />
+    <Tag TagName="tag3" PageName="state3" />
+    <Tag TagName="def" PageName="default" />
+  </Page>
+  <Page Name="state3">
+    <Message>
+      <![CDATA[third state
+def - go to default state
+tag1 - go to state 1
+tag2 - go to state 2]]>
+    </Message>
+    <Tag TagName="tag1" PageName="state1" />
+    <Tag TagName="tag2" PageName="state2" />
+    <Tag TagName="def" PageName="default" />
+  </Page>
+
+</Root>
