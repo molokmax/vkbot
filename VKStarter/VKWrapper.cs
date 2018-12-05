@@ -43,10 +43,30 @@ namespace VKStarter {
                 groupId = Convert.ToUInt64(content[1]);
                 adminIds = (content[2] ?? "").Split(new char[] { ';', ',', ' ' }).Select(x => x.Trim()).Distinct().ToList();
 
-                LongPollServerResponse serverInfo = api.Groups.GetLongPollServer(groupId);
-                longPollKey = serverInfo.Key;
-                longPollServer = serverInfo.Server;
-                longPollTs = serverInfo.Ts;
+                UpdateServerInfo();
+            }
+        }
+
+        private void UpdateServerInfo() {
+            LongPollServerResponse serverInfo = api.Groups.GetLongPollServer(groupId);
+            longPollKey = serverInfo.Key;
+            longPollServer = serverInfo.Server;
+            longPollTs = serverInfo.Ts;
+        }
+
+        private BotsLongPollHistoryResponse GetBotsLongPollResponse() {
+            try {
+                BotsLongPollHistoryResponse response = api.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams() {
+                    Key = longPollKey,
+                    Server = longPollServer,
+                    Ts = longPollTs,
+                    Wait = longPollWait
+                });
+                longPollTs = response.Ts;
+                return response;
+            } catch (VkNet.Exception.LongPollKeyExpiredException) {
+                UpdateServerInfo();
+                return GetBotsLongPollResponse();
             }
         }
 
@@ -75,13 +95,7 @@ namespace VKStarter {
                 throw new ApplicationException("VKWrapper is not initialized");
             }
 
-            BotsLongPollHistoryResponse response = api.Groups.GetBotsLongPollHistory(new BotsLongPollHistoryParams() {
-                Key = longPollKey,
-                Server = longPollServer,
-                Ts = longPollTs,
-                Wait = longPollWait
-            });
-            longPollTs = response.Ts;
+            BotsLongPollHistoryResponse response = GetBotsLongPollResponse();
             
             IList<UserMessage> result = new List<UserMessage>();
             foreach (var upd in response.Updates) {
